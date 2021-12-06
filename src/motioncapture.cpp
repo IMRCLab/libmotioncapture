@@ -11,6 +11,9 @@
 #ifdef ENABLE_QUALISYS
 #include "libmotioncapture/qualisys.h"
 #endif
+#ifdef ENABLE_NOKOV
+#include "libmotioncapture/nokov.h"
+#endif
 #ifdef ENABLE_VRPN
 #include "libmotioncapture/vrpn.h"
 #endif
@@ -121,6 +124,15 @@ namespace libmotioncapture {
         getBool(cfg, "enable_objects", true),
         getBool(cfg, "enable_pointclout", true));
     }
+#endif
+#ifdef ENABLE_NOKOV
+	else if (type == "nokov")
+	{
+        mocap = new libmotioncapture::MotionCaptureNokov(
+            getString(cfg, "hostname", "localhost"),
+            getBool(cfg, "enableFrequency", false),
+            getInt(cfg, "updateFrequency", 100));
+  }
 #endif
 #ifdef ENABLE_VRPN
     else if (type == "vrpn")

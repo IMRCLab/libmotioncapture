@@ -1,13 +1,19 @@
 cmake_minimum_required(VERSION 3.5)
 project(libmotioncapture)
 
+# for debug
+SET(CMAKE_BUILD_TYPE "Debug")
+SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb") 
+SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")  
+
 # define some options
-option(LIBMOTIONCAPTURE_BUILD_PYTHON_BINDINGS "Generate Python Bindings" ON)
-option(LIBMOTIONCAPTURE_ENABLE_QUALISYS "Enable Qualisys" ON)
-option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK "Enable Optitrack" ON)
+option(LIBMOTIONCAPTURE_BUILD_PYTHON_BINDINGS "Generate Python Bindings" OFF)
+option(LIBMOTIONCAPTURE_ENABLE_QUALISYS "Enable Qualisys" OFF)
+option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK "Enable Optitrack" OFF)
 option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE "Enable Optitrack (Closed Source)" OFF)
-option(LIBMOTIONCAPTURE_ENABLE_VICON "Enable Vicon" ON)
-option(LIBMOTIONCAPTURE_ENABLE_VRPN "Enable VRPN" ON)
+option(LIBMOTIONCAPTURE_ENABLE_VICON "Enable Vicon" OFF)
+option(LIBMOTIONCAPTURE_ENABLE_NOKOV "Enable Nokov" ON)
+option(LIBMOTIONCAPTURE_ENABLE_VRPN "Enable VRPN" OFF)
 option(LIBMOTIONCAPTURE_BUILD_EXAMPLE "Enable Example application" ON)
 
 # Enable C++14
@@ -27,6 +33,7 @@ find_package(Eigen3 REQUIRED)
 set(VICON_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/vicon-datastream-sdk/)
 set(QUALISYS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/qualisys_cpp_sdk/)
 set(NATNET_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/NatNetSDKCrossplatform/)
+set(NOKOV_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/nokov_sdk/)
 set(VRPN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/vrpn/)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -112,6 +119,22 @@ if (LIBMOTIONCAPTURE_ENABLE_QUALISYS)
   )
 endif()
 
+if (LIBMOTIONCAPTURE_ENABLE_NOKOV)
+  add_definitions(-DENABLE_NOKOV)
+  set(my_include_directories
+    ${my_include_directories}
+    ${NOKOV_SDK_DIR}/include()
+  )
+  set(my_files
+    ${my_files}
+    src/nokov.cpp
+  )
+  set(my_libraries
+    ${my_libraries}
+    SeekerSDKClient
+  )
+endif()
+
 if (LIBMOTIONCAPTURE_ENABLE_VRPN)
   add_definitions(-DENABLE_VRPN)
   option(VRPN_BUILD_CLIENT_LIBRARY "" ON)
@@ -174,3 +197,4 @@ if (LIBMOTIONCAPTURE_BUILD_EXAMPLE)
   )
 
 endif()
+
