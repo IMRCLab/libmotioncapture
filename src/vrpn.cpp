@@ -4,6 +4,7 @@
 #include <unordered_set>
 #include <iostream>
 #include <thread>
+#include <memory>
 
 // VRPN
 #include <vrpn_Tracker.h>
