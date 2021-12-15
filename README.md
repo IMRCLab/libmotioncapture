@@ -23,7 +23,6 @@ By default, `libmotioncapture` supports the following hardware:
 
 - VICON - SDK git submodule
 - Qualisys - SDK git submodule
-- OptiTrack - binary parsing over network (no dependency)
 - VRPN - SDK git submodule
 
 CMake flags can be used to disable individual systems in `CMakeLists.txt`.
