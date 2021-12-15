@@ -8,8 +8,7 @@
 
 #include "libmotioncapture/motioncapture.h"
 #include "libmotioncapture/testmocap.h"
-#include "libmotioncapture/optitrack.h"
-
+#include "libmotioncapture/nokov.h"
 using namespace libmotioncapture;
 
 // PYBIND11_MAKE_OPAQUE(std::array<uint8_t, CRTP_MAXSIZE>)
@@ -55,10 +54,10 @@ PYBIND11_MODULE(motioncapture, m) {
       .def_property_readonly("rigidBodies", &MotionCapture::rigidBodies);
 
   //
-  py::class_<MotionCaptureOptitrack>(m, "MotionCaptureOptitrack")
+  py::class_<MotionCaptureNokov>(m, "MotionCaptureNokov")
       .def(py::init<const std::string &>())
-      .def("waitForNextFrame", &MotionCaptureOptitrack::waitForNextFrame, py::call_guard<py::gil_scoped_release>())
-      .def_property_readonly("rigidBodies", &MotionCaptureOptitrack::rigidBodies);
+      .def("waitForNextFrame", &MotionCaptureNokov::waitForNextFrame, py::call_guard<py::gil_scoped_release>())
+      .def_property_readonly("rigidBodies", &MotionCaptureNokov::rigidBodies);
 
   // // Packet
   // py::class_<Packet>(m, "Packet", py::buffer_protocol())

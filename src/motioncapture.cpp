@@ -2,12 +2,6 @@
 #ifdef ENABLE_VICON
 #include "libmotioncapture/vicon.h"
 #endif
-#ifdef ENABLE_OPTITRACK
-#include "libmotioncapture/optitrack.h"
-#endif
-#ifdef ENABLE_OPTITRACK_CLOSED_SOURCE
-#include "libmotioncapture/optitrack_closed_source.h"
-#endif
 #ifdef ENABLE_QUALISYS
 #include "libmotioncapture/qualisys.h"
 #endif
@@ -96,23 +90,6 @@ namespace libmotioncapture {
         getString(cfg, "hostname", "localhost"),
         getBool(cfg, "enable_objects", true),
         getBool(cfg, "enable_pointclout", true));
-    }
-#endif
-#ifdef ENABLE_OPTITRACK
-    else if (type == "optitrack")
-    {
-      mocap = new libmotioncapture::MotionCaptureOptitrack(
-        getString(cfg, "hostname", "localhost"),
-        getString(cfg, "interface_ip", "0.0.0.0"),
-        getInt(cfg, "port_command", 1510));
-    }
-#endif
-#ifdef ENABLE_OPTITRACK_CLOSED_SOURCE
-    else if (type == "optitrack_closed_source")
-    {
-      mocap = new libmotioncapture::MotionCaptureOptitrackClosedSource(
-          getString(cfg, "hostname", "localhost"),
-          getInt(cfg, "port_command", 1510));
     }
 #endif
 #ifdef ENABLE_QUALISYS

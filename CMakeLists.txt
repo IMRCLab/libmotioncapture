@@ -2,15 +2,13 @@ cmake_minimum_required(VERSION 3.5)
 project(libmotioncapture)
 
 # for debug
-SET(CMAKE_BUILD_TYPE "Debug")
-SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb") 
-SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")  
+# SET(CMAKE_BUILD_TYPE "Debug")
+# SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb") 
+# SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")  
 
 # define some options
 option(LIBMOTIONCAPTURE_BUILD_PYTHON_BINDINGS "Generate Python Bindings" OFF)
 option(LIBMOTIONCAPTURE_ENABLE_QUALISYS "Enable Qualisys" OFF)
-option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK "Enable Optitrack" OFF)
-option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE "Enable Optitrack (Closed Source)" OFF)
 option(LIBMOTIONCAPTURE_ENABLE_VICON "Enable Vicon" OFF)
 option(LIBMOTIONCAPTURE_ENABLE_NOKOV "Enable Nokov" ON)
 option(LIBMOTIONCAPTURE_ENABLE_VRPN "Enable VRPN" OFF)
@@ -32,7 +30,6 @@ find_package(Eigen3 REQUIRED)
 
 set(VICON_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/vicon-datastream-sdk/)
 set(QUALISYS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/qualisys_cpp_sdk/)
-set(NATNET_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/NatNetSDKCrossplatform/)
 set(NOKOV_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/nokov_sdk/)
 set(VRPN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/vrpn/)
 
@@ -68,37 +65,6 @@ if (LIBMOTIONCAPTURE_ENABLE_VICON)
   set(my_libraries
     ${my_libraries}
     ViconDataStreamSDK_CPP
-  )
-endif()
-
-if (LIBMOTIONCAPTURE_ENABLE_OPTITRACK)
-  add_definitions(-DENABLE_OPTITRACK)
-  set(my_include_directories
-    ${my_include_directories}
-  )
-  set(my_files
-    ${my_files}
-    src/optitrack.cpp
-  )
-endif()
-
-if (LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE)
-  add_definitions(-DENABLE_OPTITRACK_CLOSED_SOURCE)
-  add_subdirectory(deps/NatNetSDKCrossplatform EXCLUDE_FROM_ALL)
-  set(my_include_directories
-    ${my_include_directories}
-    ${NATNET_SDK_DIR}/include
-  )
-  set(my_files
-    ${my_files}
-    src/optitrack_closed_source.cpp
-  )
-  set(my_link_directories
-    ${NATNET_SDK_DIR}/lib/ubuntu
-  )
-  set(my_libraries
-    ${my_libraries}
-    NatNet
   )
 endif()
 
