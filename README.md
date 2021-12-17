@@ -24,7 +24,7 @@ By default, `libmotioncapture` supports the following hardware:
 - VICON - SDK git submodule
 - Qualisys - SDK git submodule
 - VRPN - SDK git submodule
-- NOKOV - manually obtain SDK and copy to deps/nokov_sdk/.
+- NOKOV - manually obtain SDK and copy to deps/nokov_sdk/ and copy the .so file to the /lib or /usr/lib.
 
 CMake flags can be used to disable individual systems in `CMakeLists.txt`.
 
