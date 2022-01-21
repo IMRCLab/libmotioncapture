@@ -1,9 +1,9 @@
 [submodule "externalDependencies/vicon-datastream-sdk"]
 	path = deps/vicon-datastream-sdk
-	url = git@github.com:whoenig/vicon-datastream-sdk.git
+	url = https://github.com/whoenig/vicon-datastream-sdk.git
 [submodule "externalDependencies/qualisys_cpp_sdk"]
 	path = deps/qualisys_cpp_sdk
-	url = git@github.com:qualisys/qualisys_cpp_sdk.git
+	url = https://github.com/qualisys/qualisys_cpp_sdk.git
 	shallow = true
 [submodule "externalDependencies/pybind11"]
 	path = deps/pybind11
