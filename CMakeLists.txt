@@ -1,11 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(libmotioncapture)
 
-# for debug
-# SET(CMAKE_BUILD_TYPE "Debug")
-# SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb") 
-# SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")  
-
 # define some options
 option(LIBMOTIONCAPTURE_BUILD_PYTHON_BINDINGS "Generate Python Bindings" ON)
 option(LIBMOTIONCAPTURE_ENABLE_QUALISYS "Enable Qualisys" ON)
