@@ -7,11 +7,13 @@ project(libmotioncapture)
 # SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")  
 
 # define some options
-option(LIBMOTIONCAPTURE_BUILD_PYTHON_BINDINGS "Generate Python Bindings" OFF)
-option(LIBMOTIONCAPTURE_ENABLE_QUALISYS "Enable Qualisys" OFF)
-option(LIBMOTIONCAPTURE_ENABLE_VICON "Enable Vicon" OFF)
+option(LIBMOTIONCAPTURE_BUILD_PYTHON_BINDINGS "Generate Python Bindings" ON)
+option(LIBMOTIONCAPTURE_ENABLE_QUALISYS "Enable Qualisys" ON)
+option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK "Enable Optitrack" ON)
+option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE "Enable Optitrack (Closed Source)" OFF)
+option(LIBMOTIONCAPTURE_ENABLE_VICON "Enable Vicon" ON)
 option(LIBMOTIONCAPTURE_ENABLE_NOKOV "Enable Nokov" ON)
-option(LIBMOTIONCAPTURE_ENABLE_VRPN "Enable VRPN" OFF)
+option(LIBMOTIONCAPTURE_ENABLE_VRPN "Enable VRPN" ON)
 option(LIBMOTIONCAPTURE_BUILD_EXAMPLE "Enable Example application" ON)
 
 # Enable C++14
@@ -30,6 +32,7 @@ find_package(Eigen3 REQUIRED)
 
 set(VICON_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/vicon-datastream-sdk/)
 set(QUALISYS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/qualisys_cpp_sdk/)
+set(NATNET_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/NatNetSDKCrossplatform/)
 set(NOKOV_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/nokov_sdk/)
 set(VRPN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/vrpn/)
 
@@ -68,6 +71,37 @@ if (LIBMOTIONCAPTURE_ENABLE_VICON)
   )
 endif()
 
+if (LIBMOTIONCAPTURE_ENABLE_OPTITRACK)
+  add_definitions(-DENABLE_OPTITRACK)
+  set(my_include_directories
+    ${my_include_directories}
+  )
+  set(my_files
+    ${my_files}
+    src/optitrack.cpp
+  )
+endif()
+
+if (LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE)
+  add_definitions(-DENABLE_OPTITRACK_CLOSED_SOURCE)
+  add_subdirectory(deps/NatNetSDKCrossplatform EXCLUDE_FROM_ALL)
+  set(my_include_directories
+    ${my_include_directories}
+    ${NATNET_SDK_DIR}/include
+  )
+  set(my_files
+    ${my_files}
+    src/optitrack_closed_source.cpp
+  )
+  set(my_link_directories
+    ${NATNET_SDK_DIR}/lib/ubuntu
+  )
+  set(my_libraries
+    ${my_libraries}
+    NatNet
+  )
+endif()
+
 if (LIBMOTIONCAPTURE_ENABLE_QUALISYS)
   add_definitions(-DENABLE_QUALISYS)
   add_subdirectory(deps/qualisys_cpp_sdk EXCLUDE_FROM_ALL)
@@ -89,12 +123,16 @@ if (LIBMOTIONCAPTURE_ENABLE_NOKOV)
   add_definitions(-DENABLE_NOKOV)
   set(my_include_directories
     ${my_include_directories}
-    ${NOKOV_SDK_DIR}/include()
+    ${NOKOV_SDK_DIR}/include
   )
   set(my_files
     ${my_files}
     src/nokov.cpp
   )
+  set(my_link_directories
+    ${my_link_directories}
+    ${NOKOV_SDK_DIR}/lib
+)
   set(my_libraries
     ${my_libraries}
     SeekerSDKClient
