@@ -90,7 +90,7 @@ jobs:
       - name: Install dependencies
         run: |
           brew install eigen boost@1.85
-          pip install cmake ninja wheel
+          pip install cmake ninja wheel setuptools
 
       - name: Build
         run: |
