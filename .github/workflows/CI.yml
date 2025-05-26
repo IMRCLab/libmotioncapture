@@ -94,9 +94,7 @@ jobs:
 
       - name: Build
         run: |
-          export LDFLAGS="-L/opt/homebrew/opt/boost@1.85/lib"
-          export CPPFLAGS="-I/opt/homebrew/opt/boost@1.85/include"
-          python setup.py bdist_wheel
+          LDFLAGS="-L/opt/homebrew/opt/boost@1.85/lib" CPPFLAGS="-I/opt/homebrew/opt/boost@1.85/include" python setup.py bdist_wheel
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
