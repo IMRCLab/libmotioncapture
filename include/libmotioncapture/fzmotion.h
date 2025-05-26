@@ -160,7 +160,7 @@ namespace libmotioncapture {
 		static MotionCaptureFZMotion* s_pInstance;
 		static recursive_mutex s_mutex;
 
-		boost::asio::io_service m_IOService;
+		boost::asio::io_context m_IOContext;
 		udp::socket m_TransmissionSocket;
 		udp::socket m_ConnectionSocket;
 		udp::resolver m_Resolver;

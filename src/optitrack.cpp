@@ -45,8 +45,8 @@ namespace libmotioncapture {
       : version()
       , versionMajor(0)
       , versionMinor(0)
-      , io_service()
-      , socket(io_service)
+      , io_context()
+      , socket(io_context)
       , sender_endpoint()
       , data(MAX_PACKETSIZE)
     {
@@ -240,7 +240,7 @@ namespace libmotioncapture {
     int versionMinor;
     uint64_t clockFrequency; // ticks/second for timestamps
 
-    boost::asio::io_service io_service;
+    boost::asio::io_context io_context;
     boost::asio::ip::udp::socket socket;
     boost::asio::ip::udp::endpoint sender_endpoint;
     std::vector<char> data;
@@ -285,9 +285,9 @@ namespace libmotioncapture {
     pImpl = new MotionCaptureOptitrackImpl;
 
     // Connect to command port to query version
-    boost::asio::io_service io_service_cmd;
-    udp::socket socket_cmd(io_service_cmd, udp::endpoint(udp::v4(), 0));
-    udp::resolver resolver_cmd(io_service_cmd);
+    boost::asio::io_context io_context_cmd;
+    udp::socket socket_cmd(io_context_cmd, udp::endpoint(udp::v4(), 0));
+    udp::resolver resolver_cmd(io_context_cmd);
     udp::endpoint endpoint_cmd = *resolver_cmd.resolve({udp::v4(), hostname, std::to_string(port_command)});
 
     typedef struct

@@ -7,9 +7,9 @@ namespace libmotioncapture {
         const int iLocalPort, 
         const string& strRemoteIP, 
         const int iRemotePort
-    ) : m_ConnectionSocket(m_IOService),
-        m_TransmissionSocket(m_IOService), 
-        m_Resolver(m_IOService){
+    ) : m_ConnectionSocket(m_IOContext),
+        m_TransmissionSocket(m_IOContext), 
+        m_Resolver(m_IOContext){
         this->init();
         this->setConnectionInfo(strLocalIP, iLocalPort, strRemoteIP, iRemotePort);
         this->connect();
