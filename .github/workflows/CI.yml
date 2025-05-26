@@ -123,7 +123,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install wheel
+          pip install wheel setuptools
           vcpkg install eigen3:x64-windows
 
       - name: Install boost
