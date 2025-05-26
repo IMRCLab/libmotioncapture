@@ -354,8 +354,8 @@ namespace libmotioncapture {
     pImpl->parseModelDef(modelDef.data());
 
     // connect to data port to receive mocap data
-    auto listen_address_boost = boost::asio::ip::address_v4::from_string(interface_ip);
-    auto multicast_address_boost = boost::asio::ip::address_v4::from_string(multicast_address);
+    auto listen_address_boost = boost::asio::ip::make_address_v4(interface_ip);
+    auto multicast_address_boost = boost::asio::ip::make_address_v4(multicast_address);
 
     // Create the socket so that multiple may be bound to the same address.
     boost::asio::ip::udp::endpoint listen_endpoint(
