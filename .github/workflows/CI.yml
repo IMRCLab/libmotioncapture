@@ -89,12 +89,12 @@ jobs:
       # Using older boost version to avoid compiler errors with io_service
       - name: Install dependencies
         run: |
-          brew install eigen boost@1.85
+          brew install eigen boost
           pip install cmake ninja wheel setuptools
 
       - name: Build
         run: |
-          LDFLAGS="-L/opt/homebrew/opt/boost@1.85/lib" CPPFLAGS="-I/opt/homebrew/opt/boost@1.85/include" python setup.py bdist_wheel
+          python setup.py bdist_wheel
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
