@@ -83,6 +83,10 @@ if (LIBMOTIONCAPTURE_ENABLE_OPTITRACK)
     ${my_files}
     src/optitrack.cpp
   )
+  set(my_libraries
+    ${my_libraries}
+    Boost::system
+  )
 endif()
 
 if (LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE)
