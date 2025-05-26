@@ -55,10 +55,8 @@ namespace libmotioncapture {
         this->m_iRemoteCPort = iRemotePort;
         
         this->m_localCEndpoint = udp::endpoint(make_address_v4(this->m_strLocalIP), this->m_iLocalCPort);
-
-        udp::resolver::query query(udp::v4(), this->m_strRemoteIP, std::to_string(this->m_iRemoteCPort));
-        this->m_remoteCEndpoint = *this->m_Resolver.resolve(query);
-
+        this->m_remoteCEndpoint = udp::endpoint(make_address(this->m_strRemoteIP), this->m_iRemoteCPort);
+        
         s_mutex.unlock();
     }
     //connect with the server

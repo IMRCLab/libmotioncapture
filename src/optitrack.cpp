@@ -288,7 +288,7 @@ namespace libmotioncapture {
     boost::asio::io_context io_context_cmd;
     udp::socket socket_cmd(io_context_cmd, udp::endpoint(udp::v4(), 0));
     udp::resolver resolver_cmd(io_context_cmd);
-    udp::endpoint endpoint_cmd = *resolver_cmd.resolve({udp::v4(), hostname, std::to_string(port_command)});
+    udp::endpoint endpoint_cmd(boost::asio::ip::make_address(hostname), port_command);
 
     typedef struct
     {
