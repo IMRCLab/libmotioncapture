@@ -39,7 +39,7 @@ jobs:
         path: "dist/*.tar.gz"
 
   Linux:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     needs: Source
 
     strategy:
@@ -53,7 +53,7 @@ jobs:
         submodules: true
 
     - name: Pull builder image
-      run: docker pull quay.io/pypa/manylinux_2_34_x86_64
+      run: docker pull quay.io/pypa/manylinux_2_28_x86_64
 
     - name: Python version
       run: python --version
