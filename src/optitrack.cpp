@@ -45,8 +45,8 @@ namespace libmotioncapture {
       : version()
       , versionMajor(0)
       , versionMinor(0)
-      , io_service()
-      , socket(io_service)
+      , io_context()
+      , socket(io_context)
       , sender_endpoint()
       , data(MAX_PACKETSIZE)
     {
@@ -240,7 +240,7 @@ namespace libmotioncapture {
     int versionMinor;
     uint64_t clockFrequency; // ticks/second for timestamps
 
-    boost::asio::io_service io_service;
+    boost::asio::io_context io_context;
     boost::asio::ip::udp::socket socket;
     boost::asio::ip::udp::endpoint sender_endpoint;
     std::vector<char> data;
@@ -285,10 +285,10 @@ namespace libmotioncapture {
     pImpl = new MotionCaptureOptitrackImpl;
 
     // Connect to command port to query version
-    boost::asio::io_service io_service_cmd;
-    udp::socket socket_cmd(io_service_cmd, udp::endpoint(udp::v4(), 0));
-    udp::resolver resolver_cmd(io_service_cmd);
-    udp::endpoint endpoint_cmd = *resolver_cmd.resolve({udp::v4(), hostname, std::to_string(port_command)});
+    boost::asio::io_context io_context_cmd;
+    udp::socket socket_cmd(io_context_cmd, udp::endpoint(udp::v4(), 0));
+    udp::resolver resolver_cmd(io_context_cmd);
+    udp::endpoint endpoint_cmd(boost::asio::ip::make_address(hostname), port_command);
 
     typedef struct
     {
@@ -354,8 +354,8 @@ namespace libmotioncapture {
     pImpl->parseModelDef(modelDef.data());
 
     // connect to data port to receive mocap data
-    auto listen_address_boost = boost::asio::ip::address_v4::from_string(interface_ip);
-    auto multicast_address_boost = boost::asio::ip::address_v4::from_string(multicast_address);
+    auto listen_address_boost = boost::asio::ip::make_address_v4(interface_ip);
+    auto multicast_address_boost = boost::asio::ip::make_address_v4(multicast_address);
 
     // Create the socket so that multiple may be bound to the same address.
     boost::asio::ip::udp::endpoint listen_endpoint(

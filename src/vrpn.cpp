@@ -5,6 +5,7 @@
 #include <iostream>
 #include <thread>
 #include <memory>
+#include <chrono>
 
 // VRPN
 #include <vrpn_Tracker.h>

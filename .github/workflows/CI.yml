@@ -44,7 +44,8 @@ jobs:
 
     strategy:
       matrix:
-        python: ['3.8', '3.9', '3.10', '3.11']
+        # active versions: https://devguide.python.org/versions/
+        python: ['3.9', '3.10', '3.11', '3.12', '3.13']
 
     steps:
     - uses: actions/checkout@v3
@@ -72,7 +73,8 @@ jobs:
 
     strategy:
       matrix:
-        python: ['3.8', '3.9', '3.10', '3.11']
+        # active versions: https://devguide.python.org/versions/
+        python: ['3.9', '3.10', '3.11', '3.12', '3.13']
 
     steps:
       - uses: actions/checkout@v3
@@ -87,13 +89,11 @@ jobs:
       # Using older boost version to avoid compiler errors with io_service
       - name: Install dependencies
         run: |
-          brew install eigen boost@1.85
-          pip install cmake ninja wheel
+          brew install eigen boost
+          pip install cmake ninja wheel setuptools
 
       - name: Build
         run: |
-          export LDFLAGS="-L/opt/homebrew/opt/boost@1.85/lib"
-          export CPPFLAGS="-I/opt/homebrew/opt/boost@1.85/include"
           python setup.py bdist_wheel
 
       - name: Upload Build Artifact
@@ -108,7 +108,8 @@ jobs:
 
     strategy:
       matrix:
-        python: ['3.8', '3.9', '3.10', '3.11']
+        # active versions: https://devguide.python.org/versions/
+        python: ['3.9', '3.10', '3.11', '3.12', '3.13']
 
     steps:
       - uses: actions/checkout@v3
@@ -122,15 +123,17 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install wheel
+          pip install wheel setuptools
           vcpkg install eigen3:x64-windows
 
       - name: Install boost
-        uses: MarkusJx/install-boost@v1.0.1
+        uses: MarkusJx/install-boost@v2
         id: install-boost
         with:
-          boost_version: 1.73.0
-          toolset: msvc14.2
+          boost_version: 1.87.0
+          platform_version: 2022
+          toolset: msvc
+          link: static
 
       - name: Build
         run: python setup.py bdist_wheel

@@ -47,7 +47,9 @@ set(my_include_directories
   ${Boost_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
 )
-set(my_link_directories)
+set(my_link_directories
+  ${Boost_LIBRARY_DIRS}
+)
 set(my_files
   src/motioncapture.cpp
   src/mock.cpp
@@ -82,6 +84,10 @@ if (LIBMOTIONCAPTURE_ENABLE_OPTITRACK)
   set(my_files
     ${my_files}
     src/optitrack.cpp
+  )
+  set(my_libraries
+    ${my_libraries}
+    Boost::system
   )
 endif()
 

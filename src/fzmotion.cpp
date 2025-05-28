@@ -7,9 +7,9 @@ namespace libmotioncapture {
         const int iLocalPort, 
         const string& strRemoteIP, 
         const int iRemotePort
-    ) : m_ConnectionSocket(m_IOService),
-        m_TransmissionSocket(m_IOService), 
-        m_Resolver(m_IOService){
+    ) : m_ConnectionSocket(m_IOContext),
+        m_TransmissionSocket(m_IOContext), 
+        m_Resolver(m_IOContext){
         this->init();
         this->setConnectionInfo(strLocalIP, iLocalPort, strRemoteIP, iRemotePort);
         this->connect();
@@ -54,11 +54,9 @@ namespace libmotioncapture {
         this->m_strRemoteIP = strRemoteIP;
         this->m_iRemoteCPort = iRemotePort;
         
-        this->m_localCEndpoint = udp::endpoint(address_v4::from_string(this->m_strLocalIP), this->m_iLocalCPort);
-
-        udp::resolver::query query(udp::v4(), this->m_strRemoteIP, std::to_string(this->m_iRemoteCPort));
-        this->m_remoteCEndpoint = *this->m_Resolver.resolve(query);
-
+        this->m_localCEndpoint = udp::endpoint(make_address_v4(this->m_strLocalIP), this->m_iLocalCPort);
+        this->m_remoteCEndpoint = udp::endpoint(make_address(this->m_strRemoteIP), this->m_iRemoteCPort);
+        
         s_mutex.unlock();
     }
     //connect with the server
@@ -162,13 +160,13 @@ namespace libmotioncapture {
         ReleaseBuffer(pBuffer);
 
         //joint multicast group
-        this->m_localMEndpoint = udp::endpoint(address_v4::from_string(this->m_strMulticastGroup), this->m_iDataReceivePort);
+        this->m_localMEndpoint = udp::endpoint(make_address_v4(this->m_strMulticastGroup), this->m_iDataReceivePort);
         if (this->m_TransmissionSocket.is_open() == false) {
             this->m_TransmissionSocket.open(this->m_localMEndpoint.protocol());
             this->m_TransmissionSocket.set_option(udp::socket::reuse_address(true));
             this->m_TransmissionSocket.set_option(ip::multicast::hops(5));
             this->m_TransmissionSocket.set_option(ip::multicast::enable_loopback(true));
-            this->m_TransmissionSocket.set_option(ip::multicast::join_group(address_v4::from_string(this->m_strMulticastGroup), address_v4::from_string(this->m_strLocalIP)));
+            this->m_TransmissionSocket.set_option(ip::multicast::join_group(make_address_v4(this->m_strMulticastGroup), make_address_v4(this->m_strLocalIP)));
             this->m_TransmissionSocket.bind(this->m_localMEndpoint);
         }
 
@@ -189,7 +187,7 @@ namespace libmotioncapture {
         }
 
         if (this->m_TransmissionSocket.is_open() == true) {
-            this->m_TransmissionSocket.set_option(ip::multicast::leave_group(address_v4::from_string(this->m_strMulticastGroup), address_v4::from_string(this->m_strLocalIP)));
+            this->m_TransmissionSocket.set_option(ip::multicast::leave_group(make_address_v4(this->m_strMulticastGroup), make_address_v4(this->m_strLocalIP)));
             this->m_TransmissionSocket.close();
         }
 
