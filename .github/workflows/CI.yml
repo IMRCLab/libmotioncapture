@@ -133,7 +133,7 @@ jobs:
           boost_version: 1.87.0
           platform_version: 2022
           toolset: msvc
-          link: shared
+          link: static
 
       - name: Build
         run: python setup.py bdist_wheel
