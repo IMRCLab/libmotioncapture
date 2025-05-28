@@ -48,7 +48,7 @@ set(my_include_directories
   ${EIGEN3_INCLUDE_DIRS}
 )
 set(my_link_directories
-  ${Boost_LINK_DIRS}
+  ${Boost_LIBRARY_DIRS}
 )
 set(my_files
   src/motioncapture.cpp
