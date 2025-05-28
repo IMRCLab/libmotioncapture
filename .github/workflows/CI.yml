@@ -86,6 +86,7 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
+      # Using older boost version to avoid compiler errors with io_service
       - name: Install dependencies
         run: |
           brew install eigen boost
@@ -129,7 +130,8 @@ jobs:
         uses: MarkusJx/install-boost@v2
         id: install-boost
         with:
-          boost_version: 1.73.0
+          boost_version: 1.87.0
+          platform_version: 2022
           toolset: msvc
 
       - name: Build
