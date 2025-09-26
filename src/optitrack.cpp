@@ -359,7 +359,7 @@ namespace libmotioncapture {
 
     // Create the socket so that multiple may be bound to the same address.
     boost::asio::ip::udp::endpoint listen_endpoint(
-        listen_address_boost, port_data);
+        boost::asio::ip::address_v4::any(), port_data);
     pImpl->socket.open(listen_endpoint.protocol());
     pImpl->socket.set_option(boost::asio::ip::udp::socket::reuse_address(true));
     pImpl->socket.bind(listen_endpoint);
