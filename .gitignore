@@ -1,6 +1,7 @@
 build/*
 .vscode/
 dist/
+.cache
 
 *.so
 *.egg-info/
