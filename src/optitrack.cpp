@@ -1,6 +1,7 @@
 #include "libmotioncapture/optitrack.h"
 
 #include <boost/asio.hpp>
+#include <iostream>
 
 using boost::asio::ip::udp;
 
@@ -332,16 +333,6 @@ namespace libmotioncapture {
     pImpl->versionMinor = response.NatNetVersion[1];
     memcpy(&pImpl->clockFrequency, response.HighResClockFrequency, sizeof(uint64_t));
 
-    if (!response.IsMulticast) {
-      throw std::runtime_error("Motive does not use multicast. Please update your streaming settings!");
-    }
-
-    std::stringstream sstr;
-    sstr << (int)response.MulticastGroupAddress[0] << "."
-         << (int)response.MulticastGroupAddress[1] << "."
-         << (int)response.MulticastGroupAddress[2] << "."
-         << (int)response.MulticastGroupAddress[3];
-    std::string multicast_address = sstr.str();
     uint16_t port_data = response.DataPort;
 
     // query model def
@@ -355,7 +346,6 @@ namespace libmotioncapture {
 
     // connect to data port to receive mocap data
     auto listen_address_boost = boost::asio::ip::make_address_v4(interface_ip);
-    auto multicast_address_boost = boost::asio::ip::make_address_v4(multicast_address);
 
     // Create the socket so that multiple may be bound to the same address.
     boost::asio::ip::udp::endpoint listen_endpoint(
@@ -364,8 +354,22 @@ namespace libmotioncapture {
     pImpl->socket.set_option(boost::asio::ip::udp::socket::reuse_address(true));
     pImpl->socket.bind(listen_endpoint);
 
-    // Join the multicast group on a specific interface
-    pImpl->socket.set_option(boost::asio::ip::multicast::join_group(multicast_address_boost, listen_address_boost));
+    if (response.IsMulticast) {
+      std::stringstream sstr;
+      sstr << (int)response.MulticastGroupAddress[0] << "."
+           << (int)response.MulticastGroupAddress[1] << "."
+           << (int)response.MulticastGroupAddress[2] << "."
+           << (int)response.MulticastGroupAddress[3];
+      std::string multicast_address = sstr.str();
+      auto multicast_address_boost = boost::asio::ip::make_address_v4(multicast_address);
+      // Join the multicast group on a specific interface
+      pImpl->socket.set_option(boost::asio::ip::multicast::join_group(multicast_address_boost, listen_address_boost));
+    } else {
+      // log some server info
+      std::ostringstream ustr;
+      ustr << "Using unicast from server " << hostname << ":" << port_data;
+      std::cout << ustr.str() << std::endl;
+    }
   }
 
   const std::string & MotionCaptureOptitrack::version() const

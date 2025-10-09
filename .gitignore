@@ -2,6 +2,7 @@ build/*
 .vscode/
 dist/
 .cache
+compile_commands.json
 
 *.so
 *.egg-info/
