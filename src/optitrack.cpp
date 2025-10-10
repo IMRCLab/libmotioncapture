@@ -344,32 +344,90 @@ namespace libmotioncapture {
     modelDef.resize(reply_length);
     pImpl->parseModelDef(modelDef.data());
 
-    // connect to data port to receive mocap data
-    auto listen_address_boost = boost::asio::ip::make_address_v4(interface_ip);
+      // ----------------------------------------------------------------------
+// [NEW] Send a NatNet "Client Connect" handshake for unicast mode
+// ----------------------------------------------------------------------
 
-    // Create the socket so that multiple may be bound to the same address.
-    boost::asio::ip::udp::endpoint listen_endpoint(
-        boost::asio::ip::address_v4::any(), port_data);
-    pImpl->socket.open(listen_endpoint.protocol());
-    pImpl->socket.set_option(boost::asio::ip::udp::socket::reuse_address(true));
-    pImpl->socket.bind(listen_endpoint);
+if (!response.IsMulticast) {
+  std::cout << "[NatNet] Sending Client Connect request to server..." << std::endl;
 
-    if (response.IsMulticast) {
-      std::stringstream sstr;
-      sstr << (int)response.MulticastGroupAddress[0] << "."
-           << (int)response.MulticastGroupAddress[1] << "."
-           << (int)response.MulticastGroupAddress[2] << "."
-           << (int)response.MulticastGroupAddress[3];
-      std::string multicast_address = sstr.str();
-      auto multicast_address_boost = boost::asio::ip::make_address_v4(multicast_address);
-      // Join the multicast group on a specific interface
-      pImpl->socket.set_option(boost::asio::ip::multicast::join_group(multicast_address_boost, listen_address_boost));
-    } else {
-      // log some server info
-      std::ostringstream ustr;
-      ustr << "Using unicast from server " << hostname << ":" << port_data;
-      std::cout << ustr.str() << std::endl;
-    }
+  // Command port is usually 1510
+  const uint16_t port_cmd = 1510;
+
+  // Build a NatNet "Connect" command (message ID 0x0002)
+  struct NatNetCommand {
+    uint16_t messageId;
+    uint16_t packetSize;
+  } __attribute__((packed));
+
+  NatNetCommand connectCmd;
+  connectCmd.messageId = 0x0002;  // "Client Connect" message
+  connectCmd.packetSize = 0;
+
+  boost::asio::ip::udp::socket socket_cmd_tmp(io_context_cmd);
+  socket_cmd_tmp.open(boost::asio::ip::udp::v4());
+
+  boost::asio::ip::udp::endpoint server_endpoint(
+      boost::asio::ip::make_address_v4(hostname), port_cmd);
+
+  boost::system::error_code ec;
+  socket_cmd_tmp.send_to(boost::asio::buffer(&connectCmd, sizeof(connectCmd)),
+                         server_endpoint, 0, ec);
+
+  if (ec) {
+    std::cerr << "[NatNet] Failed to send Client Connect request: " << ec.message() << std::endl;
+  } else {
+    std::cout << "[NatNet] Sent Client Connect request to "
+              << hostname << ":" << port_cmd << std::endl;
+  }
+
+  // socket_cmd_tmp.close();
+}
+
+
+   // connect to data port to receive mocap data
+auto listen_address_boost = boost::asio::ip::make_address_v4("141.23.110.162");
+
+pImpl->socket.open(boost::asio::ip::udp::v4());
+pImpl->socket.set_option(boost::asio::ip::udp::socket::reuse_address(true));
+
+if (response.IsMulticast) {
+  std::stringstream sstr;
+  sstr << (int)response.MulticastGroupAddress[0] << "."
+       << (int)response.MulticastGroupAddress[1] << "."
+       << (int)response.MulticastGroupAddress[2] << "."
+       << (int)response.MulticastGroupAddress[3];
+  std::string multicast_address = sstr.str();
+  auto multicast_address_boost = boost::asio::ip::make_address_v4(multicast_address);
+
+  // Bind to any address for multicast
+  boost::asio::ip::udp::endpoint listen_endpoint(boost::asio::ip::address_v4::any(), port_data);
+  pImpl->socket.bind(listen_endpoint);
+
+  // Join the multicast group on a specific interface
+  pImpl->socket.set_option(boost::asio::ip::multicast::join_group(multicast_address_boost, listen_address_boost));
+
+  std::cout << "Joined multicast group " << multicast_address
+            << " on interface " << listen_address_boost << std::endl;
+
+} else {
+  // UNICAST MODE
+  std::ostringstream ustr;
+  ustr << "Using unicast from server " << hostname << ":" << port_data;
+  std::cout << ustr.str() << std::endl;
+
+  boost::system::error_code ec;
+
+  boost::asio::ip::udp::endpoint local_endpoint(listen_address_boost, port_data);
+  pImpl->socket.bind(local_endpoint, ec);
+
+  if (ec) {
+    std::cerr << "Failed to bind unicast UDP socket: " << ec.message() << std::endl;
+  } else {
+    std::cout << "Bound UDP socket to " << local_endpoint.address().to_string()
+              << ":" << local_endpoint.port() << " for unicast reception." << std::endl;
+  }
+}
   }
 
   const std::string & MotionCaptureOptitrack::version() const
@@ -384,6 +442,8 @@ namespace libmotioncapture {
       pImpl->data.resize(MAX_PACKETSIZE);
       size_t length = pImpl->socket.receive_from(boost::asio::buffer(pImpl->data.data(), pImpl->data.size()), pImpl->sender_endpoint);
       pImpl->data.resize(length);
+      std::cout << "[VRPN DEBUG] Received " << length
+          << " bytes from " << std::endl;
     } while (pImpl->socket.available() > 0);
 
     if (pImpl->data.size() > 4) {
