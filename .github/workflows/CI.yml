@@ -28,7 +28,8 @@ jobs:
 
     - name: Build source distribution
       run: |
-        sudo apt-get install -y libboost-system-dev libboost-thread-dev libeigen3-dev ninja-build
+        sudo apt update
+        sudo apt install -y libboost-system-dev libboost-thread-dev libeigen3-dev ninja-build
         pip3 install wheel
         pip3 wheel dist/*.tar.gz
 
