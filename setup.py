@@ -45,6 +45,11 @@ class CMakeBuild(build_ext):
             "-DCMAKE_BUILD_TYPE={}".format(cfg),  # not used on MSVC, but no harm
             "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" # to make sure vrpn compiles
         ]
+        
+        # Add CMAKE_TOOLCHAIN_FILE for vcpkg on Windows
+        if "CMAKE_TOOLCHAIN_FILE" in os.environ:
+            cmake_args += ["-DCMAKE_TOOLCHAIN_FILE={}".format(os.environ["CMAKE_TOOLCHAIN_FILE"])]
+        
         build_args = []
 
         if self.compiler.compiler_type != "msvc":
