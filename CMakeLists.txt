@@ -6,7 +6,7 @@ option(LIBMOTIONCAPTURE_BUILD_PYTHON_BINDINGS "Generate Python Bindings" ON)
 option(LIBMOTIONCAPTURE_ENABLE_QUALISYS "Enable Qualisys" OFF)
 option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK "Enable Optitrack" ON)
 option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE "Enable Optitrack (Closed Source)" OFF)
-option(LIBMOTIONCAPTURE_ENABLE_VICON "Enable Vicon" OFF)
+option(LIBMOTIONCAPTURE_ENABLE_VICON "Enable Vicon" ON)
 option(LIBMOTIONCAPTURE_ENABLE_NOKOV "Enable Nokov" OFF)
 option(LIBMOTIONCAPTURE_ENABLE_VRPN "Enable VRPN" OFF)
 option(LIBMOTIONCAPTURE_ENABLE_FZMOTION "Enable FZMOTION" OFF)
@@ -17,6 +17,8 @@ option(LIBMOTIONCAPTURE_BUILD_EXAMPLE "Enable Example application" ON)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+find_package(Threads REQUIRED)
 
 find_package(Boost 1.5 REQUIRED) # for optitrack
 add_definitions(
@@ -88,6 +90,7 @@ if (LIBMOTIONCAPTURE_ENABLE_OPTITRACK)
   set(my_libraries
     ${my_libraries}
     Boost::boost
+    Threads::Threads
   )
 endif()
 
