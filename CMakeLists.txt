@@ -29,6 +29,15 @@ add_definitions(
 
 find_package(Eigen3 REQUIRED)
 
+# Handle both old and new Eigen3 package configurations
+if(NOT TARGET Eigen3::Eigen)
+  # Old-style Eigen3 package - create interface target
+  add_library(Eigen3::Eigen INTERFACE IMPORTED)
+  set_target_properties(Eigen3::Eigen PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${EIGEN3_INCLUDE_DIR};${EIGEN3_INCLUDE_DIRS}"
+  )
+endif()
+
 set(VICON_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/vicon-datastream-sdk/)
 set(QUALISYS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/qualisys_cpp_sdk/)
 set(NATNET_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/NatNetSDKCrossplatform/)
@@ -235,7 +244,10 @@ target_link_directories(libmotioncapture PUBLIC
   ${my_link_directories}
 )
 target_link_libraries(libmotioncapture
-  ${my_libraries}
+  PUBLIC
+    Eigen3::Eigen
+  PRIVATE
+    ${my_libraries}
 )
 set_property(TARGET libmotioncapture PROPERTY POSITION_INDEPENDENT_CODE ON)
 
