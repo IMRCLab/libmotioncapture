@@ -234,9 +234,8 @@ target_link_directories(libmotioncapture PUBLIC
   ${my_link_directories}
 )
 target_link_libraries(libmotioncapture
+  Eigen3::Eigen
   ${my_libraries}
-  PRIVATE
-    Eigen3::Eigen
 )
 set_property(TARGET libmotioncapture PROPERTY POSITION_INDEPENDENT_CODE ON)
 
