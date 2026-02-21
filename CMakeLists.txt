@@ -19,7 +19,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Threads REQUIRED)
-find_package(Boost 1.5 COMPONENTS system REQUIRED) # for optitrack
+find_package(Boost 1.5) # for optitrack
 add_definitions(
   -DBOOST_DATE_TIME_NO_LIB
   -DBOOST_REGEX_NO_LIB
@@ -91,6 +91,11 @@ if (LIBMOTIONCAPTURE_ENABLE_OPTITRACK)
     Boost::boost
     Threads::Threads
   )
+  if (Boost_SYSTEM_FOUND)
+    set(my_libraries
+      Boost::system
+    )
+  endif()
 endif()
 
 if (LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE)
