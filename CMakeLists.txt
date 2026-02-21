@@ -18,7 +18,8 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(Boost 1.5 COMPONENTS system REQUIRED) # for optitrack
+find_package(Threads REQUIRED)
+find_package(Boost 1.5 OPTIONAL_COMPONENTS system) # for optitrack
 add_definitions(
   -DBOOST_DATE_TIME_NO_LIB
   -DBOOST_REGEX_NO_LIB
@@ -87,8 +88,15 @@ if (LIBMOTIONCAPTURE_ENABLE_OPTITRACK)
   )
   set(my_libraries
     ${my_libraries}
-    Boost::system
+    Boost::boost
+    Threads::Threads
   )
+  if (Boost_SYSTEM_FOUND)
+    set(my_libraries
+      ${my_libraries}
+      Boost::system
+    )
+  endif()
 endif()
 
 if (LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE)
@@ -232,6 +240,7 @@ target_link_directories(libmotioncapture PUBLIC
   ${my_link_directories}
 )
 target_link_libraries(libmotioncapture
+  Eigen3::Eigen
   ${my_libraries}
 )
 set_property(TARGET libmotioncapture PROPERTY POSITION_INDEPENDENT_CODE ON)
