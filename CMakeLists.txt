@@ -3,7 +3,7 @@ project(libmotioncapture)
 
 # define some options
 option(LIBMOTIONCAPTURE_BUILD_PYTHON_BINDINGS "Generate Python Bindings" ON)
-option(LIBMOTIONCAPTURE_ENABLE_QUALISYS "Enable Qualisys" OFF)
+option(LIBMOTIONCAPTURE_ENABLE_QUALISYS "Enable Qualisys" ON)
 option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK "Enable Optitrack" ON)
 option(LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE "Enable Optitrack (Closed Source)" OFF)
 option(LIBMOTIONCAPTURE_ENABLE_VICON "Enable Vicon" ON)
