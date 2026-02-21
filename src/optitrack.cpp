@@ -5,6 +5,19 @@
 
 using boost::asio::ip::udp;
 
+// Source - https://stackoverflow.com/a/3312896
+// Posted by Steph, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-02-21, License - CC BY-SA 4.0
+
+#ifdef __GNUC__
+#define PACK( __Declaration__ ) __Declaration__ __attribute__((__packed__))
+#endif
+
+#ifdef _MSC_VER
+#define PACK( __Declaration__ ) __pragma( pack(push, 1) ) __Declaration__ __pragma( pack(pop))
+#endif
+
+
 namespace libmotioncapture {
 
   constexpr int MAX_PACKETSIZE = 65503; // max size of packet (actual packet size is dynamic)
@@ -355,10 +368,10 @@ if (!response.IsMulticast) {
   const uint16_t port_cmd = 1510;
 
   // Build a NatNet "Connect" command (message ID 0x0002)
-  struct NatNetCommand {
+  PACK(struct NatNetCommand {
     uint16_t messageId;
     uint16_t packetSize;
-  } __attribute__((packed));
+  });
 
   NatNetCommand connectCmd;
   connectCmd.messageId = 0x0002;  // "Client Connect" message
