@@ -10,7 +10,7 @@
 	url = https://github.com/pybind/pybind11.git
 [submodule "externalDependencies/vrpn"]
 	path = deps/vrpn
-	url = https://github.com/vrpn/vrpn.git
+	url = https://github.com/IMRCLab/vrpn.git
 [submodule "externalDependencies/NatNetSDKCrossplatform"]
 	path = deps/NatNetSDKCrossplatform
 	url = https://github.com/whoenig/NatNetSDKCrossplatform.git
