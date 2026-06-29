@@ -455,8 +455,6 @@ if (response.IsMulticast) {
       pImpl->data.resize(MAX_PACKETSIZE);
       size_t length = pImpl->socket.receive_from(boost::asio::buffer(pImpl->data.data(), pImpl->data.size()), pImpl->sender_endpoint);
       pImpl->data.resize(length);
-      std::cout << "[VRPN DEBUG] Received " << length
-          << " bytes from " << std::endl;
     } while (pImpl->socket.available() > 0);
 
     if (pImpl->data.size() > 4) {
