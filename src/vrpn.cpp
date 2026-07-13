@@ -87,14 +87,19 @@ namespace libmotioncapture {
 
     pImpl->updateTrackers();
     pImpl->trackerData.clear();
-    // do {
-      pImpl->connection->mainloop();
-      for (auto tracker : pImpl->trackers) {
-        tracker.second->mainloop();
-      }
-      // std::this_thread::sleep_for(std::chrono::microseconds(1));
-    // } while(pImpl->trackerData.size() < pImpl->trackers.size());
-      lastTime = now;
+    pImpl->connection->mainloop();
+    for (auto tracker : pImpl->trackers) {
+      tracker.second->mainloop();
+    }
+
+    // Note: This implementation does not support stamp per rigid body, but will assume that all rigid bodies have the same timestamp
+    for (const auto& data : pImpl->trackerData) {
+      struct timeval stamp = data.second.msg_time;
+      timestamp_ = stamp.tv_sec * 1000000ULL + stamp.tv_usec;
+
+      break;
+    }
+    lastTime = now;
   }
 
   const std::map<std::string, RigidBody>& MotionCaptureVrpn::rigidBodies() const
@@ -138,6 +143,11 @@ namespace libmotioncapture {
       return RigidBody(name, position, rotation);
     }
     throw std::runtime_error("Unknown rigid body!");
+  }
+
+  uint64_t MotionCaptureVrpn::timeStamp() const
+  {
+    return timestamp_;
   }
 
 }

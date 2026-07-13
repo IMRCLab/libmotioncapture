@@ -19,8 +19,14 @@ namespace libmotioncapture {
     virtual void waitForNextFrame();
     virtual const std::map<std::string, RigidBody> &rigidBodies() const;
     virtual RigidBody rigidBodyByName(const std::string &name) const;
+    virtual uint64_t timeStamp() const;
 
     virtual bool supportsRigidBodyTracking() const
+    {
+      return true;
+    }
+
+    virtual bool supportsTimeStamp() const
     {
       return true;
     }
