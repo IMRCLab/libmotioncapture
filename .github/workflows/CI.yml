@@ -140,6 +140,7 @@ jobs:
         run: python setup.py bdist_wheel
         env:
           BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
+          BOOST_LIBRARYDIR: ${{ steps.install-boost.outputs.BOOST_ROOT }}/lib
           CMAKE_TOOLCHAIN_FILE: "C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
       
       - name: Upload Build Artifact
