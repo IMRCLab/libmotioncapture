@@ -125,7 +125,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install wheel setuptools
-          vcpkg install eigen3:x64-windows boost-filesystem:x64-windows boost-system:x64-windows
+          vcpkg install eigen3:x64-windows boost-filesystem:x64-windows boost-system:x64-windows boost-thread:x64-windows
 
       - name: Build
         run: python setup.py bdist_wheel
