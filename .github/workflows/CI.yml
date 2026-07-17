@@ -125,22 +125,13 @@ jobs:
       - name: Install dependencies
         run: |
           pip install wheel setuptools
-          vcpkg install eigen3:x64-windows
-
-      - name: Install boost
-        uses: MarkusJx/install-boost@v2
-        id: install-boost
-        with:
-          boost_version: 1.87.0
-          platform_version: 2022
-          toolset: msvc
-          link: static
+          vcpkg install eigen3:x64-windows boost-filesystem:x64-windows boost-system:x64-windows boost-thread:x64-windows boost-asio:x64-windows boost-format:x64-windows boost-math:x64-windows
 
       - name: Build
         run: python setup.py bdist_wheel
         env:
-          BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
           CMAKE_TOOLCHAIN_FILE: "C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
+          VCPKG_TARGET_TRIPLET: "x64-windows"
       
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
