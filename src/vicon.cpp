@@ -12,6 +12,15 @@ namespace libmotioncapture {
   public:
     Client client;
     std::string version;
+
+    // A subject's pose is its root segment's. Vicon Tracker names that segment after the
+    // subject, while other Vicon setups name it "root"; asking for the subject's name there
+    // finds nothing, and the subject is never reported.
+    std::string rootSegment(const std::string& subject) const
+    {
+      auto const root = client.GetSubjectRootSegmentName(subject);
+      return root.Result == Result::Success ? std::string(root.SegmentName) : subject;
+    }
   };
 
   MotionCaptureVicon::MotionCaptureVicon(
@@ -70,8 +79,9 @@ namespace libmotioncapture {
     size_t count = pImpl->client.GetSubjectCount().SubjectCount;
     for (size_t i = 0; i < count; ++i) {
       auto const name = pImpl->client.GetSubjectName(i).SubjectName;
-      auto const translation = pImpl->client.GetSegmentGlobalTranslation(name, name);
-      auto const quaternion = pImpl->client.GetSegmentGlobalRotationQuaternion(name, name);
+      auto const segment = pImpl->rootSegment(name);
+      auto const translation = pImpl->client.GetSegmentGlobalTranslation(name, segment);
+      auto const quaternion = pImpl->client.GetSegmentGlobalRotationQuaternion(name, segment);
       if (   translation.Result == Result::Success
           && quaternion.Result == Result::Success
           && !translation.Occluded
@@ -98,8 +108,9 @@ namespace libmotioncapture {
   RigidBody MotionCaptureVicon::rigidBodyByName(
     const std::string& name) const
   {
-    auto const translation = pImpl->client.GetSegmentGlobalTranslation(name, name);
-    auto const quaternion = pImpl->client.GetSegmentGlobalRotationQuaternion(name, name);
+    auto const segment = pImpl->rootSegment(name);
+    auto const translation = pImpl->client.GetSegmentGlobalTranslation(name, segment);
+    auto const quaternion = pImpl->client.GetSegmentGlobalRotationQuaternion(name, segment);
     if (   translation.Result == Result::Success
         && quaternion.Result == Result::Success
         && !translation.Occluded
